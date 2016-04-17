@@ -1,0 +1,288 @@
+#page-wrapper {
+  margin: 0 auto;
+}
+
+body.bg-dark-linen {
+  /* background: url(../images/pebbly-beach-camp.jpg) 0px 0px no-repeat fixed; */
+  background: url(../images/bg-newbacg.jpg);
+}
+
+#top-fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 0;
+  width: 100%;
+  z-index: 200;
+  padding: 0;
+  margin: 0;
+}
+
+#top-fixed .block {
+  margin-bottom: 0;
+}
+
+#top-fixed .region {
+  background: #444 repeating-linear-gradient(#555, #333 3em);
+  box-shadow: 0 3px 2px -2px #999;
+}
+
+#top-fixed ul.menu {
+  height: 2em;
+  margin: 0;
+  text-align: center;
+  vertical-align: middle;
+}
+
+#top-fixed ul.menu li {
+  display: inline-block;
+  padding: 0 2.5em;
+}
+
+#top-fixed ul.menu li a {
+  color: white;
+  line-height: 1.25em;
+}
+
+#top-fixed ul.menu li.active-trail:before {
+  content: "»";
+  color: white;
+  padding-right: 0.25em;
+}
+
+#top-fixed ul.menu li.active-trail {
+  font-weight: bold;
+}
+
+@media only screen and (max-width:767px) {
+  #top-fixed {
+  }
+
+  #top-fixed ul.menu {
+    font-size: 0.75em;
+  }
+
+  #top-fixed ul.menu li {
+    padding: 0 0.5em;
+  }
+}
+
+/* the block on the top right with the address and office hours */
+#top-links #block-block-2 {
+  margin: 0;
+  padding: 0;
+  font-size: 0.7em;
+}
+
+/* the language selector block */
+#block-locale-language {
+  margin: 0;
+}
+
+#block-locale-language ul.language-switcher-locale-session li {
+  list-style-type: none;
+}
+
+header.article-header, .title-wrapper {
+  margin: 0;
+  padding: 0;
+}
+
+#head {
+  margin-top: 3em;
+}
+
+#footer {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+#footer .region-footer {
+  padding: 0 10px;
+}
+
+#footer #block-menu-menu-footer-menu {
+  margin-bottom: 0;
+}
+
+#footer #block-menu-menu-footer-menu ul.menu {
+  text-align: center;
+}
+
+#footer #block-menu-menu-footer-menu ul.menu li {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+@media only screen and (min-width:768px) {
+  #footer #block-menu-menu-footer-menu ul.menu li {
+    padding: 0 1em;
+  }
+}
+
+@media only screen and (max-width:767px) {
+  #footer #block-menu-menu-footer-menu ul.menu li {
+    padding: 0 0.5em;
+    font-size: 0.75em;
+  }
+}
+
+#footer #block-menu-menu-footer-menu ul.menu li.leaf {
+  border-right: 1px dashed white;
+}
+
+#footer #block-menu-menu-footer-menu ul.menu li.last {
+  border-right: none;
+}
+
+#footer #block-block-1 {
+  text-align: center;
+  font-size: 10px;
+}
+
+/* block with logos/links to external sites in footer */
+#block-block-3 {
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+#block-block-3 li {
+  list-style: none;
+  display: inline;
+  margin: 0 1em;
+  padding: 0;
+}
+
+/* webform on the registration page */
+fieldset {
+  border: none;
+}
+
+.webform-component-markup h2 {
+  width: auto;
+  margin-bottom: 1em;
+  padding-bottom: 0.5em;
+  border-bottom: 1px dashed #525252;
+}
+
+.webform-component-fieldset label {
+  display: inline-block;
+  width: 14em;
+  margin: 0;
+}
+
+.webform-component--fieldset--breakfast .form-item-submitted-fieldset-breakfast label {
+  width: auto;
+}
+
+.webform-component--fieldset--additional-information .description {
+  font-size: 1em;
+}
+
+.webform-component--fieldset--code-and-town-fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+.webform-component--fieldset--code-and-town-fieldset label {
+  margin: 0;
+}
+
+.webform-component--fieldset--code-and-town-fieldset .form-item {
+  margin: 0;
+  padding: 0;
+}
+
+.webform-component--fieldset--code-and-town-fieldset--code-and-town {
+  float: left;
+}
+
+.webform-component--fieldset--code-and-town-fieldset--code-and-town .form-text {
+  margin-right: 1em;
+}
+
+.webform-component--fieldset--code-and-town-fieldset--town {
+  padding-top: 1em;
+}
+
+/* prices table on the prices page */
+#prices-table-div table {
+  width: 564px;
+  margin: auto;
+}
+
+#prices-table-div tbody {
+  border-top: none;
+}
+
+/* the google places map on the "where to find us page" */
+#google-place-map {
+  text-align: center;
+  padding-top: 1em;
+}
+
+#google-place-map-iframe {
+  width: 95%;
+  min-height: 400px;
+  border: 0;
+}
+
+/* guestbook fixes */
+.guestbook .guestbook-entry {
+  margin-bottom: 2em;
+  padding: 0.5em 1em;
+  background-color: #eee;
+  border-radius: 1em;
+  box-shadow: 5px 5px 10px grey;
+}
+
+.guestbook .guestbook-entry .submitted {
+  display: block;
+}
+
+.guestbook .guestbook-entry .guestbook-message {
+  padding-left: 1em;
+}
+
+.guestbook ul.guestbook-links {
+  display: inline-block;
+}
+
+/* list on the "links" page */
+.view-external-links .views-row {
+  /*
+  position: relative;
+  height: 80px;
+  */
+  clear: both;
+}
+
+.view-external-links .views-row .views-field-field-external-link-logo {
+  margin-right: 0.5em;
+  float: left;
+}
+
+.view-external-links .views-row .views-field-field-external-link {
+  /*
+  position: absolute;
+  top: 5%;
+  left: 64px;
+  */
+}
+
+.view-external-links .views-row .views-field-field-body {
+  /*
+  position: absolute;
+  top: 35%;
+  left: 64px;
+  */
+}
+@media only screen and (max-width:767px) {
+  .view-external-links .views-row {
+    font-size: 12px;
+  }
+}

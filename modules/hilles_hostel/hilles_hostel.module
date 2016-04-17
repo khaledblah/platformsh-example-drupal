@@ -1,0 +1,128 @@
+<?php
+
+/**
+ * @file hilles_hostel.module
+ * Modifications for the website of Hille's Hostel
+ */
+
+/**
+ * Implements hook_cron().
+ *
+ */
+function hilles_hostel_cron() {
+  $last_time = variable_get('hilles_hostel_backpacker_last_check', '');
+  $threshold = time() - 60*60*24; // do not check more often than once every 24h
+
+  if (empty($last_time) || (!empty($last_time) && $last_time < $threshold)) {
+    variable_set('hilles_hostel_backpacker_last_check', time());
+
+    $langs = language_list();
+    foreach($langs as $lang) {
+      $links_url = 'https://www.german-hostels.de/app/hostels/linkblock/lang/' . $lang->language . '?format=json';
+      $reply = drupal_http_request($links_url);
+      if ($reply->code == 200 && !empty($reply->data)) {
+        $links = json_decode($reply->data);
+        if (!empty($links)) {
+          foreach($links as $link) {
+            $query = new EntityFieldQuery();
+            $query->entityCondition('entity_type', 'node')
+              ->entityCondition('bundle', 'link')
+              ->propertyCondition('title', $link->name)
+              ->fieldCondition('field_external_link', 'url', $link->link);
+            $result = $query->execute();
+            if (isset($result['node'])) {
+              $link_items_nids = array_keys($result['node']);
+              $link_items = entity_load('node', $link_items_nids);
+              if (!empty($link_items)) {
+              }
+            } else {
+              $new_link = new stdClass();
+              $new_link->type = 'link';
+              $new_link->is_new = TRUE;
+              if (($new_link = node_submit($new_link)) !== FALSE) {
+                $new_link->status = 1;
+                $new_link->language = $lang->language;
+                $new_link->title = $link->name;
+                $new_link->{'field_body'} = array(LANGUAGE_NONE => array(array('format' => 'plain_text', 'value' => $link->name)));
+                $new_link->{'field_external_link'} = array(LANGUAGE_NONE => array(array('url' => $link->link)));
+                node_save($new_link);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ *
+ * Patch adopted from issue below. Disabled for review. Prolly not required
+ * anymore.
+ *
+ * @see https://www.drupal.org/node/1252144#comment-6736460
+ */
+function __hilles_hostel_form_alter(&$form, &$form_state, $form_id) {
+  if ($form_id == 'i18n_string_translate_page_form') {
+    // Loop all strings.
+    foreach ($form['strings']['all'] as $name => $field) {
+      // The field for [ block title / vocabulary name / vocabulary description / term name ] are textfields in ori language,
+      // but textareas when translating: change these to textfields.
+      if (
+        preg_match('/blocks:block:[0-9]+:title/i' , $name) ||
+        preg_match('/taxonomy:(vocabulary|term):[0-9]+:name/i' , $name) ||
+        preg_match('/taxonomy:vocabulary:[0-9]+:description/i' , $name)
+      ) {
+        $form['strings']['all'][$name]['#type'] = 'textfield';
+      }
+      // Change textarea to text_format and overwrite description which is already auto included in text_format fields.
+      elseif (
+        preg_match('/blocks:block:[0-9]+:body/i' , $name) ||
+        preg_match('/taxonomy:term:[0-9]+:description/i' , $name)
+      ) {
+        $form['strings']['all'][$name]['#type'] = 'text_format';
+        $form['strings']['all'][$name]['#description'] = '<br />';
+      }
+    }
+
+    // Add submit function.
+    $form['#submit'] = array_merge(array('_hilles_hostel_form_submit') , $form['#submit']);
+  }
+}
+
+function _hilles_hostel_form_submit($form, &$form_state) {
+  // Remove wysiwyg format because i18n cant handle it.
+  foreach ($form_state['values']['strings'] as $name => $field) {
+    if (
+      preg_match('/blocks:block:[0-9]+:body/i' , $name) ||
+      preg_match('/taxonomy:term:[0-9]+:description/i' , $name)
+    ){
+      unset($form_state['values']['strings'][$name]['format']);
+    }
+  }
+}
+
+/**
+* Implements of hook_galleryformatter_styles().
+*
+* This hook allows other modules to create additional tab styles for
+* the galleryformatter module. Disabled on purpose. Left here for documentation.
+*
+* @return array
+*   An array of key => value pairs suitable for inclusion as the #options in a
+*   select or radios form element. Each key must be the location of a css
+*   file for a gallery formatter style. Each value should be the name of the style.
+*/
+function __hilles_hostel_galleryformatter_styles() {
+  $gallerystyles_directory = drupal_get_path('module', 'hilles_hostel') . '/gallerystyles';
+  $files = file_scan_directory($gallerystyles_directory, '/\.css$/');
+  $gallerystyles = array();
+  foreach ($files as $file) {
+    // Skip RTL files.
+    if (!strpos($file->name, '-rtl')) {
+      $gallerystyles[$file->uri] = drupal_ucfirst($file->name);
+    }
+  }
+  return $gallerystyles;
+}

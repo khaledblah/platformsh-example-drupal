@@ -1,0 +1,5 @@
+name = Evergreen Hostel
+description = Modifications for the website of Evergreen Hostel
+dependencies[] = i18n
+dependencies[] = i18n_string
+core = 7.x

@@ -1,0 +1,5 @@
+name = Hille's Hostel
+description = Modifications for the website of Hille's Hostel
+dependencies[] = i18n
+dependencies[] = i18n_string
+core = 7.x

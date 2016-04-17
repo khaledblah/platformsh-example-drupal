@@ -1,0 +1,105 @@
+<?php
+
+/**
+ * @file evergreen_hostel.module
+ * Modifications for the website of Evergreen Hostel
+ */
+
+/**
+ * Implements hook_node_view().
+ *
+ */
+function evergreen_hostel_node_view($node, $view_mode, $langcode) {
+  $node_ids = array(21, 22);
+  if (in_array($node->nid, $node_ids) && $view_mode === 'full') {
+    global $language;
+    $google_place_params = array(
+      'key' => 'AIzaSyB67hhND4OQCueywQX6ckMQXLdPXuNF6jU',
+      'q' => 'hille\'s hostel trier',
+      'zoom' => 14,
+      'language' => $language->language,
+    );
+    $google_place_url = 'https://www.google.com/maps/embed/v1/place?';
+    $google_place_url .= http_build_query($google_place_params);
+
+    $markup = '<div id="google-place-map">';
+    $markup .= '<iframe id="google-place-map-iframe" frameborder="0" src="' . $google_place_url . '"></iframe>';
+    $markup .= '</div>';
+    $node->content['google_place_map'] = array(
+      '#markup' => $markup,
+      '#weight' => 1,
+    );
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ *
+ * Patch adopted from issue below
+ *
+ * @see https://www.drupal.org/node/1252144#comment-6736460
+ */
+function evergreen_hostel_form_alter(&$form, &$form_state, $form_id) {
+  if ($form_id == 'i18n_string_translate_page_form') {
+    // Loop all strings.
+    foreach ($form['strings']['all'] as $name => $field) {
+      // The field for [ block title / vocabulary name / vocabulary description / term name ] are textfields in ori language,
+      // but textareas when translating: change these to textfields.
+      if (
+        preg_match('/blocks:block:[0-9]+:title/i' , $name) ||
+        preg_match('/taxonomy:(vocabulary|term):[0-9]+:name/i' , $name) ||
+        preg_match('/taxonomy:vocabulary:[0-9]+:description/i' , $name)
+      ) {
+        $form['strings']['all'][$name]['#type'] = 'textfield';
+      }
+      // Change textarea to text_format and overwrite description which is already auto included in text_format fields.
+      elseif (
+        preg_match('/blocks:block:[0-9]+:body/i' , $name) ||
+        preg_match('/taxonomy:term:[0-9]+:description/i' , $name)
+      ) {
+        $form['strings']['all'][$name]['#type'] = 'text_format';
+        $form['strings']['all'][$name]['#description'] = '<br />';
+      }
+    }
+
+    // Add submit function.
+    $form['#submit'] = array_merge(array('_evergreen_hostel_form_submit') , $form['#submit']);
+  }
+}
+
+function _evergreen_hostel_form_submit($form, &$form_state) {
+  // Remove wysiwyg format because i18n cant handle it.
+  foreach ($form_state['values']['strings'] as $name => $field) {
+    if (
+      preg_match('/blocks:block:[0-9]+:body/i' , $name) ||
+      preg_match('/taxonomy:term:[0-9]+:description/i' , $name)
+    ){
+      unset($form_state['values']['strings'][$name]['format']);
+    }
+  }
+}
+
+/**
+* Implements of hook_galleryformatter_styles().
+*
+* This hook allows other modules to create additional tab styles for
+* the galleryformatter module.
+*
+* @return array
+*   An array of key => value pairs suitable for inclusion as the #options in a
+*   select or radios form element. Each key must be the location of a css
+*   file for a gallery formatter style. Each value should be the name of the style.
+*/
+function evergreen_hostel_galleryformatter_styles() {
+  $gallerystyles_directory = drupal_get_path('module', 'evergreen_hostel') . '/gallerystyles';
+  $files = file_scan_directory($gallerystyles_directory, '/\.css$/');
+  $gallerystyles = array();
+  foreach ($files as $file) {
+    // Skip RTL files.
+    if (!strpos($file->name, '-rtl')) {
+      $gallerystyles[$file->uri] = drupal_ucfirst($file->name);
+    }
+  }
+  return $gallerystyles;
+}
+
